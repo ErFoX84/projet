@@ -1,3 +1,10 @@
+# USER STORY
+En tant que cycliste, je souhaite que la pression des pneus de mon vélo soit toujours optimale, sans avoir à vérifier ou ajuster manuellement, afin d'améliorer ma sécurité, mon confort et mes performances, quel que soit le terrain. Grâce à un système embarqué avec capteurs et compresseur intégré, je peux surveiller la pression en temps réel, recevoir des alertes et ajuster automatiquement ou manuellement la pression selon mes besoins.
+
+# Gestion de la pression des pneus d'un vélo avec un compresseur intégré
+
+
+
 # Gestion de la pression des pneus d'un vélo avec un compresseur intégré
 
 Ce projet vise à développer un système permettant de surveiller et d'ajuster la pression des pneus d'un vélo grâce à un compresseur intégré.
