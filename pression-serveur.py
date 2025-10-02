@@ -9,34 +9,35 @@ from threading import Thread
 PRESSION_REGISTER = 0
 
 
-def perte_pression_horaire(pression, perte_mensuelle_pourcent=15.0):
+
+def pression_simulation(context, slave_id=0x00, pression_initiale=200, perte_mensuelle=15):
     """
-    Calcule la pression restante après 1 heure, selon une perte mensuelle réaliste.
+    Simule la perte de pression et met à jour le registre Modbus chaque jour.
     La pression est en centibar (ex: 200 = 2 bars).
     """
-    perte_horaire = perte_mensuelle_pourcent / 100 / 720
-    return pression * (1 - perte_horaire)
-
-def pression_simulation(context, slave_id=0x00):
-    """Simule une perte de pression réaliste toutes les heures."""
-    pression = 200  # Pression initiale (2 bars, en centibar)
-    heures = 0
+    perte_journaliere = perte_mensuelle / 100 / 30
+    pression = pression_initiale
+    jours = 0
     while True:
-        pression = perte_pression_horaire(pression)
-        pression = max(100, min(pression, 300))  # Entre 1 et 3 bars
+        pression *= (1 - perte_journaliere)
+        pression = max(0, min(pression, 300))  # Entre 0 et 3 bars
+        jours += 1
         context[slave_id].setValues(3, PRESSION_REGISTER, [int(pression)])
-        heures += 1
-        print(f"Heure {heures}: pression = {pression/100:.2f} bar")
-        time.sleep(3600)  # 1 heure
+        print(f"Jour {jours}: pression = {int(pression)} centibar(s)")
+        time.sleep(1)  # 1 seconde = 1 jour simulé
+
+
+# --- Bloc serveur Modbus ---
+
 
 if __name__ == "__main__":
     # Création du datastore Modbus avec un registre de 10 mots
     device = ModbusDeviceContext(
-        hr=ModbusSequentialDataBlock(0, [200]*10)  # 20.0°C initial
+        hr=ModbusSequentialDataBlock(0, [200]*10) 
     )
     context = ModbusServerContext(devices=device, single=True)
 
-    # Lancement du thread de simulation de température
+    # Lancement du thread de simulation de la pression
     sim_thread = Thread(target=pression_simulation, args=(context,))
     sim_thread.daemon = True
     sim_thread.start()
