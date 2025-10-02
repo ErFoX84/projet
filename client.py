@@ -1,4 +1,4 @@
-
+import tkinter as tk
 from pymodbus.client import ModbusTcpClient
 
 def simuler_bouton_compresseur():
@@ -7,8 +7,7 @@ def simuler_bouton_compresseur():
 
     # Lecture de la pression actuelle
     result = client.read_holding_registers(address=0)
-    if not result.isError():
-        print("Pression actuelle:", result.registers[0], "centibar")
+    pression_actuelle = result.registers[0]
 
     input("Appuyez sur Entrée pour allumer le compresseur...")
     # On simule l'activation du compresseur en écrivant 1 dans le coil 0
@@ -17,5 +16,9 @@ def simuler_bouton_compresseur():
 
     client.close()
 
+
+
+
+
 if __name__ == "__main__":
-    simuler_bouton_compresseur()    
+       simuler_bouton_compresseur()  
