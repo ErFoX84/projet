@@ -19,11 +19,11 @@ def pression_simulation(context, slave_id=0x00, pression_initiale=200, perte_men
     pression = pression_initiale
     jours = 0
     while True:
-        # Vérifie si le compresseur est activé via le coil 0
-        compresseur = context[slave_id].getValues(1, 0, count=1)[0]  # 1 = coils, 0 = adresse du bouton
-        if compresseur:
+        # Vérifie si le compresseur est activé (registre 1)
+        compresseur = context[slave_id].getValues(3, 1, count=1)[0]
+        if compresseur == 1:
             pression = pression_initiale
-            context[slave_id].setValues(1, 0, [0])  # Réinitialise le coil (bouton)
+            context[slave_id].setValues(3, 1, [0])  # Réinitialise le bouton
             print(f"Compresseur activé : pression remise à {pression} centibar(s)")
         else:
             pression *= (1 - perte_journaliere)
@@ -40,8 +40,8 @@ def pression_simulation(context, slave_id=0x00, pression_initiale=200, perte_men
 if __name__ == "__main__":
     # Création du datastore Modbus avec un registre de 10 mots
     device = ModbusDeviceContext(
-        hr=ModbusSequentialDataBlock(0, [200]*10) 
-        
+        hr=ModbusSequentialDataBlock(0, [200]*10),
+        co=ModbusSequentialDataBlock(0, [True]*10)
     )
     context = ModbusServerContext(devices=device, single=True)
 
