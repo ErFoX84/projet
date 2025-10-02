@@ -24,13 +24,15 @@ def pression_simulation(context, slave_id=0x00, pression_initiale=200, perte_men
         if compresseur == 1:
             pression = pression_initiale
             context[slave_id].setValues(3, 1, [0])  # Réinitialise le bouton
-            print(f"Compresseur activé : pression remise à {pression} centibar(s)")
+            print(f"Compresseur activé : pression remise à {pression/100:.2f} bar(s)")
         else:
             pression *= (1 - perte_journaliere)
             pression = max(0, min(pression, 300))  # Entre 0 et 3 bars
         jours += 1
         context[slave_id].setValues(3, PRESSION_REGISTER, [int(pression)])
-        print(f"Jour {jours}: pression = {int(pression)} centibar(s)")
+        print(f"Jour {jours}: pression = {pression/100:.2f} bar(s)")
+        if pression < 100:
+            print("\033[91mAlerte : pression inférieure à 1 bar !\033[0m")
         time.sleep(1)  # 1 seconde = 1 jour simulé
 
 
